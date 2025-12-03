@@ -4,7 +4,7 @@ import streamlit as st
 import urllib.parse 
 
 # --- 1. TITLE AND PHENOMENON SELECTION (NGSS PEs) ---
-st.title("Dynamic Data Gem (DDG) Generator")
+st.title("Dynamic Data Generator (DDG)")
 st.markdown("Configure parameters below to generate a synthetic data set.")
 
 # Select the phenomenon based on the Performance Expectation (PE) ID
