@@ -54,35 +54,33 @@ sigma_noise = st.slider(
 
 # --- 4. DATA SUBMISSION LOGIC ---
 
+# CRITICAL: These are the actual codes extracted from your pre-filled form URL
+# These variables map the input to the correct column in your Google Sheet queue.
+GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHG4YeDy8TVSV8OqnyAMt19MIus4OkHgvnN4E6P8j7n0syWw/formResponse" 
+PE_ID_ENTRY = 'entry.1507860347' 
+L_PARAM_ENTRY = 'entry.556163887' 
+SIGMA_ENTRY = 'entry.368579672' 
+
 if st.button("Generate Synthetic Data"):
     if pe_id == "Select a Phenomenon":
         st.error("Please select a phenomenon before generating data.")
     else:
-        # --- CRITICAL: MANUAL SETUP REQUIRED ---
-        # 1. Get the Submission URL and Entry IDs from your Google Form (linked to the Control Sheet).
-        # You must inspect the form's source code to find the "entry.XXXXXXX" IDs for each column:
-        
-        # NOTE: Replace the GOOGLE_FORM_URL and entry IDs with YOUR actual values!
-        GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/YOUR_FORM_KEY/formResponse" 
-        
+        # 1. Define the parameters using the extracted entry IDs
         url_params = {
-            # These names must match your sheet columns: PE_ID, Param_L, Noise_Sigma
-            # Use the correct entry IDs for your specific form fields:
-            'entry.1000000': pe_id,       
-            'entry.1000001': L_param,     
-            'entry.1000002': sigma_noise, 
-            # We skip sending k_param, t_range, mass_const as they are currently hardcoded defaults in Colab.
-            # If you add them to the Form/Sheet later, you must add their entry IDs here.
-            'submit': 'submit'
+            PE_ID_ENTRY: pe_id,       # Takes PE_ID from selectbox
+            L_PARAM_ENTRY: L_param,     # Takes L_param/Mass from slider
+            SIGMA_ENTRY: sigma_noise, # Takes Noise_Sigma from slider
+            'submit': 'submit' # Critical: ensures the form is submitted
         }
         
-        # Build the final submission link
+        # 2. Build the final submission link
         submission_url = GOOGLE_FORM_URL + "?" + urllib.parse.urlencode(url_params)
         
-        # Use an HTML redirect to submit the data, as Streamlit doesn't handle POST directly
+        # 3. Display success and use a redirect link to finalize the submission
         st.success(f"Request Sent for PE ID: {pe_id}!")
         st.markdown(f"**Data parameters have been recorded in the Control Sheet queue.**")
-        st.warning("Please proceed to the next step: **Manually running the Colab notebook** based on the email notification (Phase 4).")
+        st.info("The DDG Engine will execute the computation based on the latest entry shortly.")
         
-        # This is the actual submission trigger (using a temporary redirect button)
-        st.markdown(f'<a href="{submission_url}" target="_self">Click Here to Finalize Submission</a>', unsafe_allow_html=True)
+        # This link forces the browser to submit the GET request to the Google Form,
+        # thereby adding the new request row to your DDG_Control_Sheet.
+        st.markdown(f'<a href="{submission_url}" target="_self">Click Here to Finalize Submission and Check Queue</a>', unsafe_allow_html=True)
