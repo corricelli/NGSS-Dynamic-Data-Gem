@@ -11,8 +11,12 @@ st.markdown("Configure parameters below to generate a synthetic data set.")
 # Corrected: Added the list of options
 pe_id = st.selectbox(
     "1. Select Target NGSS Phenomenon (PE ID):",
-    options=, 
-    index=2, # Default to "Select a Phenomenon"
+    options=(
+        "Select a Phenomenon", 
+        "LS2-1", 
+        "PS3-1_KE"
+    ), 
+    index=2, # This defaults the selection to "PS3-1_KE"
     help="LS2-1: Population Dynamics | PS3-1_KE: Kinetic Energy"
 )
 
