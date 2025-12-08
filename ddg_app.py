@@ -46,6 +46,7 @@ if pe_id == "LS2-1 (Population Dynamics)":
     
 elif pe_id == "PS3-1_KE (Kinetic Energy)":
     # Parameters for Kinetic Energy (Energy vs. Motion)
+    # This slider now correctly assigns to mass_const
     mass_const = st.slider("Object Mass (m) in kg:", min_value=1.0, max_value=50.0, value=10.0, step=1.0, help="The mass of the object whose kinetic energy is measured.")
     t_range = st.slider("Velocity Range (v) Max:", min_value=10, max_value=100, value=60, help="The range of velocities (0 up to this value) to measure. Acts as time steps.")
     L_param = 0.0
@@ -104,31 +105,32 @@ sigma_noise = st.slider(
     step=50.0,
     help="Controls data variability. Higher values require statistical analysis (SEP 4)." 
 )
-
 # --- 4. DATA SUBMISSION LOGIC (FINAL CORRECTED BLOCK) ---
 
-# CRITICAL: These Entry IDs are now all correct and finalized.
+# CRITICAL: These Entry IDs are now all correct and finalized based on your latest link.
 GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHG4YeDy8TVSV8OqnyAMt19MIus4OkHgvnN4E6P8j7n0syWw/formResponse" 
 PE_ID_ENTRY = 'entry.1507860347' 
 L_PARAM_ENTRY = 'entry.556163887' 
 SIGMA_ENTRY = 'entry.368579672' 
 
-# NEWLY DISCOVERED IDs:
-K_PARAM_ENTRY = 'entry.875928263'  
-T_RANGE_ENTRY = 'entry.681731572'  
+# UPDATED/NEW IDs:
+K_PARAM_ENTRY = 'entry.875928263'          # k_param (Growth Rate, Efficiency, etc.)
+T_RANGE_ENTRY = 'entry.1578041889'         # t_range (Simulation Length, Velocity Range, etc.)
+MASS_CONST_ENTRY = 'entry.1613817087'      # Mass_Const (Only used for PS3-1_KE)
 
 
 if st.button("Generate Synthetic Data"):
     if pe_id == "Select a Phenomenon":
         st.error("Please select a phenomenon before generating data.")
     else:
-        # 1. Define the parameters, now including k_param and t_range
+        # 1. Define the parameters, now including Mass_Const
         url_params = {
             PE_ID_ENTRY: pe_id,       
             L_PARAM_ENTRY: L_param,     
             SIGMA_ENTRY: sigma_noise, 
-            K_PARAM_ENTRY: k_param,     # Sends Growth Rate, Efficiency, or Feedback Multiplier
-            T_RANGE_ENTRY: t_range,     # Sends Simulation Length or Data Points
+            K_PARAM_ENTRY: k_param,     
+            T_RANGE_ENTRY: t_range,     
+            MASS_CONST_ENTRY: mass_const, # NEW: Sends Mass_Const
             'submit': 'submit'
         }
         
