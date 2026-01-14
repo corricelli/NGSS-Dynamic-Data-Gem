@@ -1,26 +1,24 @@
-# ddg_app.py (FINAL ROBUST VERSION)
-
 import streamlit as st
-import urllib.parse 
+import urllib.parse
 
 # --- 1. TITLE AND PHENOMENON SELECTION (NGSS PEs) ---
 
-st.title("Dynamic Data Generator (DDG)") 
+st.title("Dynamic Data Generator (DDG)")
 st.markdown("Configure parameters below to generate a synthetic data set.")
 
 # Select the phenomenon based on the Performance Expectation (PE) ID
 pe_id = st.selectbox(
     "1. Select Target NGSS Phenomenon (PE ID):",
     options=(
-        "Select a Phenomenon", 
+        "Select a Phenomenon",
         "LS2-1 (Population Dynamics)",        # MS/HS Life Science
         "HS-PS3-1 (Energy Conservation)",     # HS Physical Science
         "HS-PS1-5 (Reaction Kinetics)",       # HS Physical Science (Enzymes/Chemistry)
         "MS-ESS1-3 (Solar System Scaling)",   # MS Earth Science
         "HS-ESS2-2 (Climate Feedback Loop)",  # HS Earth Science
         "PS3-1_KE (Kinetic Energy)"           # MS/HS Physical Science
-    ), 
-    index=0, 
+    ),
+    index=0,
     help="PEs require quantitative analysis, models, or simulations."
 )
 
@@ -29,7 +27,7 @@ L_param = 0.0
 k_param = 0.0
 t_range = 0
 mass_const = 0.0
-sigma_noise = 0.0 
+sigma_noise = 0.0
 
 # --- 2. SCIENTIFIC CONTROLS (DCI Parameters) ---
 st.header("2. Scientific Controls (DCI Parameters)")
@@ -44,7 +42,6 @@ if pe_id == "LS2-1 (Population Dynamics)":
     mass_const = 0.0
     
 elif pe_id == "PS3-1_KE (Kinetic Energy)":
-    # These sliders correctly update the global variables
     mass_const = st.slider("Object Mass (m) in kg:", min_value=1.0, max_value=50.0, value=10.0, step=1.0, help="The mass of the object whose kinetic energy is measured.")
     t_range = st.slider("Velocity Range (v) Max:", min_value=10, max_value=100, value=60, help="The range of velocities (0 up to this value) to measure. Acts as time steps.")
     L_param = 0.0
@@ -86,7 +83,6 @@ elif pe_id == "HS-ESS2-2 (Climate Feedback Loop)":
     mass_const = 0.0
 
 else:
-    # If no phenomenon selected, stop the script here to prevent errors
     st.info("Select a phenomenon to view specific controls.")
     st.stop() 
 
@@ -112,20 +108,19 @@ email_address = st.text_input(
     help="The generated CSV data will be sent to this email address automatically after processing."
 )
 
-# --- 5. DATA SUBMISSION LOGIC (FINAL ROBUST BLOCK) ---
+# --- 5. DATA SUBMISSION LOGIC (FINAL UPDATED BLOCK) ---
 
-# CRITICAL: Entry IDs are confirmed from your previous steps
-GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdHG4YeDy8TVSV8OqnyAMt19MIus4OkHgvnN4E6P8j7n0syWw/formResponse" 
+# UPDATED: This is the URL from your new form (with /formResponse added)
+GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdNAC8YeSBAYYwdLPzlvB9q3DO0fqsng6bdcnkCcHEyAkhvVQ/formResponse"
+
+# CONFIRMED: These IDs match the pre-filled link you provided
 PE_ID_ENTRY = 'entry.1507860347' 
 L_PARAM_ENTRY = 'entry.556163887' 
 SIGMA_ENTRY = 'entry.368579672' 
-
-# NEWLY DISCOVERED IDs:
-K_PARAM_ENTRY = 'entry.875928263'          
-T_RANGE_ENTRY = 'entry.1578041889'         
-MASS_CONST_ENTRY = 'entry.1613817087'      
-EMAIL_ENTRY = 'entry.1121062352'           # Final Confirmed Email ID
-
+K_PARAM_ENTRY = 'entry.875928263'           
+T_RANGE_ENTRY = 'entry.1578041889'          
+MASS_CONST_ENTRY = 'entry.1613817087'       
+EMAIL_ENTRY = 'entry.1121062352'           
 
 if st.button("Generate Synthetic Data"):
     if not email_address or "@" not in email_address:
@@ -133,22 +128,22 @@ if st.button("Generate Synthetic Data"):
     elif pe_id == "Select a Phenomenon":
         st.error("Please select a phenomenon.")
     else:
-        # 1. Define the parameters, including all variables
+        # 1. Define the parameters
         url_params = {
-            PE_ID_ENTRY: pe_id,       
-            L_PARAM_ENTRY: L_param,     
+            PE_ID_ENTRY: pe_id,        
+            L_PARAM_ENTRY: L_param,      
             SIGMA_ENTRY: sigma_noise, 
-            K_PARAM_ENTRY: k_param,     
-            T_RANGE_ENTRY: t_range,     
+            K_PARAM_ENTRY: k_param,      
+            T_RANGE_ENTRY: t_range,      
             MASS_CONST_ENTRY: mass_const,
-            EMAIL_ENTRY: email_address, # CRITICAL: Send the email address
+            EMAIL_ENTRY: email_address,
             'submit': 'submit'
         }
         
         # 2. Build the final submission link
         submission_url = GOOGLE_FORM_URL + "?" + urllib.parse.urlencode(url_params)
         
-        # 3. Display success and use a redirect link to finalize the submission
+        # 3. Display success and use a redirect link
         st.success(f"Request Sent for PE ID: {pe_id}!")
         st.markdown(f"**Data parameters have been recorded in the Control Sheet queue.**")
         st.info("The DDG Engine will execute the computation based on the latest entry shortly.")
